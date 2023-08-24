@@ -4,19 +4,31 @@
   become: true
   pre_tasks:
 
-  - name: install updates (CentOS)
+  - name: update repo cache (CentOS)
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
 
-  - name: install updates (Ubuntu)
+  - name: update repo cache (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for amir
+    tags: always
+    authorized_key:
+      user: amir
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZWOKgm2F4DI9SLYJnSH6fbD2H+M6f41s9ebraZlTgN ansible"
+
 
 
 - hosts: web_servers

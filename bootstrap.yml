@@ -1,0 +1,49 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create amir user
+    tags: always
+    user:
+      name: amir
+      group: root
+
+
+  - name: add ssh key for amir
+    tags: always
+    authorized_key:
+      user: amir
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZWOKgm2F4DI9SLYJnSH6fbD2H+M6f41s9ebraZlTgN ansible"
+
+
+  - name: add sudoer file for amir
+    tags: always
+    copy:
+      src: sudoer_amir
+      dest: /etc/sudoers.d/amir
+      owner: root
+      group: root
+      mode: 0440
+
+
